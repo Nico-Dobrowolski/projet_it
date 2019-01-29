@@ -1,0 +1,24 @@
+{% form_theme formulaireContact 'bootstrap_4_layout.html.twig' %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Contactez nous !{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="shadow-lg p-3 mb-5 bg-white rounded">
+        {{ form_start(formulaireContact)}}
+            {{ form_row(formulaireContact.nom,{'attr':{'placeholder':"#Jimi Hendrix"}}) }}
+            {{ form_row(formulaireContact.service) }}
+            {{ form_row(formulaireContact.mail,{'attr':{'placeholder':"#jimi.hendrix@gmail.com"}}) }}
+            {{ form_row(formulaireContact.objet,{'attr':{'placeholder':"#[Objet] Hendrix"}}) }}
+            {{ form_row(formulaireContact.message,{'attr':{'placeholder':"#[Message] Hendrix"}}) }}
+            <button type="submit" class="btn btn-success">Envoyer</button>
+        {{ form_end(formulaireContact)}}
+
+
+        {% for flashMessage in app.session.flashbag.get('success') %}
+            <div class="alert alert-success">{{ flashMessage }}</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
