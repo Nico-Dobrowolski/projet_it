@@ -5,24 +5,17 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-//ADD pour requete 
+// ========= ADD pour requete 
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
 
 use App\Entity\ServicesData;
-
 use App\Entity\ContactData;
-use App\Repository\ContactDataRepository;
-
 use Symfony\Component\HttpFoundation\Session\Session;
 
 //ADD TYPE CONTACT
-use Symfony\Component\Form\Forms;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
+
 
 
 
@@ -37,10 +30,10 @@ class ContactController extends AbstractController
         //dump($request);
         $contactData = new ContactData();
 
-//========================les champs pour le formulaire ==============================
+//========================les champs pour le form ==============================
         $formulaireContact = $this->createFormBuilder($contactData)
                                 ->add('nom')
-                                ->add('service', EntityType::class, [ //check data dans la table ServicesData
+                                ->add('service', EntityType::class, [ //check data -> table ServicesData
                                     'class' => ServicesData::class,
                                     'choice_label' => 'name_service'
                                 ])
@@ -51,24 +44,24 @@ class ContactController extends AbstractController
 
         $formulaireContact->handleRequest($request);
         // $formulaireContact->getData() == $contactData
-        if($formulaireContact->isSubmitted() && $formulaireContact->isValid() ){ //le form est complété ? et ok?
+        if($formulaireContact->isSubmitted() && $formulaireContact->isValid() ){ //le form est Submit ? et ok?
             
             $dataContact = $formulaireContact->getData(); //dataContact array with "name", "service", "mail", "objet", "message"
             $dataService = $formulaireContact['service']->getData(); //dataService array with "nameService", "mailRef", "mailSecondary"
-            dump($dataContact->getNom());
+            dump($dataContact->getMail());
             //dump($dataService);
 
 //==============================Création du mail avec récup des data contact et service ===========
 
             $message = (new \Swift_Message())
-                ->setSubject($dataContact->getObjet())
+                ->setSubject("Message de : ".$dataContact->getNom()." à pour objet [ ".$dataContact->getObjet()." ]")
                 ->setFrom($dataContact->getMail())//$dataContact->getMail()
                 ->setTo([$dataService->getMailRef(),$dataService->getMailSecondary()])
                 ->setBody($dataContact->getMessage(),'text/html');
             
             $mailer->send($message);
 
-//==========================Envoie dans la base de donnée (persistance + flush dans data de contactData)
+//==========================Envoie dans la base de donnée (persistance + flush -> contactData)
             $manager->persist($contactData);
             $manager->flush();
             
@@ -80,8 +73,8 @@ class ContactController extends AbstractController
                 'Votre mail à bien été envoyer'
             );
 //=========================================================================
-            //return $this->redirectToRoute('contact'); 
-        }
+           #return $this->redirectToRoute('contact'); //enlever # si .envi est config' 
+        } 
        
 
         return $this->render('contact/contact.html.twig', [
