@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use App\Service\MailService;
 //ADD TYPE data
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
